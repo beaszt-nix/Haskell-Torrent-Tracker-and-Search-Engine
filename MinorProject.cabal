@@ -22,16 +22,36 @@ library
        Data.Torrent.DB.BsonValueReader
 
   build-depends:    
-      base >= 4.7 && < 5, bytestring,
-      bencode >= 0.6, containers,
-      unordered-containers, network >= 2.8,
-      transformers , binary >= 0.8,
-      typesafe-endian >= 0.1,  snap-core >= 1.0,
-      cpu , time, saltine, split, 
-      mtl , MonadRandom >= 0.5, mongoDB >= 2.7,
-      attoparsec >= 0.12, text , time-compat,
-      cryptohash == 0.11.9, bson >= 0.3 && < 0.5
-  
+      base >= 4.7 && < 5, 
+  --    bytestring,
+  --    bencode >= 0.6, containers,
+  --    unordered-containers, network >= 2.8,
+  --    transformers , binary >= 0.8,
+  --    typesafe-endian >= 0.1,  snap-core >= 1.0,
+  --    cpu , time, saltine, split, 
+  --    mtl , MonadRandom >= 0.5, mongoDB >= 2.7,
+  --    attoparsec >= 0.12, text , time-compat,
+      cryptohash           == 0.11.9, 
+      bson                 >= 0.3 && < 0.5,
+      MonadRandom          >= 0.5.2 && < 0.6,
+      mtl                  >= 2.2.2 && < 2.3,
+      transformers         >= 0.5.6 && < 0.6,
+      bytestring           >= 0.10.8 && < 0.11,
+      time                 >= 1.8.0 && < 1.9,
+      attoparsec           >= 0.13.2 && < 0.14,
+      containers           >= 0.6.0 && < 0.7,
+      binary               >= 0.8.6 && < 0.9,
+      text                 >= 1.2.3 && < 1.3,
+      bencode              >= 0.6.1 && < 0.7,
+      network              >= 3.1.1 && < 3.2,
+      cpu                  >= 0.1.2 && < 0.2,
+      mongoDB              >= 2.7.0 && < 2.8,
+      split                >= 0.2.3 && < 0.3,
+      unordered-containers >= 0.2.11 && < 0.3,
+      saltine              >= 0.1.1 && < 0.2,
+      snap-core            >= 1.0.4 && < 1.1,
+      time-compat          >= 1.9.3 && < 1.10,
+      typesafe-endian      >= 0.1.0 && < 0.2
   hs-source-dirs:      src
 
   default-language:    Haskell2010
