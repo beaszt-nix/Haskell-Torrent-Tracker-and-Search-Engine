@@ -26,7 +26,7 @@ import qualified Data.ByteString               as B
 
 -- Takes Bencoded Lazy Bytestring and produces BSON doc ready to be uploaded.
 -- Adds Info_Hash to the metadata (For Working with LIVE Torrents)
-bencodeToBSON :: BL.ByteString -> Bson.Document
+bencodeToBSON :: BL.ByteString -> Either Bson.Document Bson.Document
 bencodeToBSON bs =
   let bDict@(BDict bmap) = fromMaybe (BString "") . bRead $ bs
       infoHash =
@@ -34,10 +34,10 @@ bencodeToBSON bs =
   in  either fail (succ infoHash) . runBReader btorrent $ bDict
  where
   bsonBin x = Bson.Bin (Bson.Binary x)
-  succ :: B.ByteString -> Bson.Document -> Bson.Document
-  succ infohash val = concat [["info_hash" =: bsonBin infohash], val]
-  fail :: String -> Bson.Document
-  fail _ = ["Parse Error" =: sToText "Malformed Torrent File"]
+  succ :: B.ByteString -> Bson.Document -> Either Bson.Document Bson.Document
+  succ infohash val = Right $ concat [["info_hash" =: bsonBin infohash], val]
+  fail :: String -> Either Bson.Document Bson.Document
+  fail _ = Left $ ["Parse Error" =: sToText "Malformed Torrent File"]
 
 toBinary :: BL.ByteString -> Bson.Value
 toBinary x = Bson.Bin (Bson.Binary $ toStrict x)

@@ -19,7 +19,8 @@ library
        Network.Torrent.Tracker.QueryParsers,
        Data.Torrent.DB.ToBSON,
        Data.Torrent.DB.FromBSON,
-       Data.Torrent.DB.BsonValueReader
+       Data.Torrent.DB.BsonValueReader,
+       Data.Torrent.DB
 
   build-depends:    
       base >= 4.7 && < 5, 
