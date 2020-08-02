@@ -69,8 +69,7 @@ defConf = AnnounceConf
   , ancDefPeer     = 30
   , ancIdleTimeOut = 360
   , ancAddrs       = [ ("0.0.0.0", "6969")
-                     , --ipv4
-                       ("::"     , "6970") --ipv6
+                     , ("::"     , "6970") --ipv6
                      ]
   }
 

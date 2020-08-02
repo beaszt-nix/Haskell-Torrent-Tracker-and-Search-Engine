@@ -92,7 +92,9 @@ getTorrentFromText text = do
 getTorrentFromIH :: [Infohash] -> Action IO Cursor
 getTorrentFromIH ihs = do
   col <- liftIO torrColl
-  let ihls   = Array $ map (\ih -> Doc ["info_hash" =: Bin (Binary ih)]) ihs
+  let ihls = Array $ map
+        (\ih -> Doc ["info_hash" =: Bin (Binary (w160toBString ih))])
+        ihs
       query  = select ["$or" =: ihls] col :: Query
       query' = query { project = ["info_hash" =: 0] }
   curs <- find query'

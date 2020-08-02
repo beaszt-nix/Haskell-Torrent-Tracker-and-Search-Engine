@@ -1,6 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
 
+module Main where
+
 import           Database.MongoDB
 import           Database.MongoDB.Connection
 import           Database.MongoDB.Admin

@@ -15,31 +15,53 @@ module Network.Torrent.Tracker.AnnounceReqTypes
   , bencodePeers
   , emptyScrapeRes
   , isRFC1918
-  , validInfoHash
-  , validPeer
+  , w160toBString
   )
 where
 
 import           Data.ByteString.Lazy           ( toStrict
                                                 , fromStrict
                                                 )
+import           Control.Monad
 import qualified Data.ByteString.Char8         as B8
+import           Data.Binary
+import           Data.Binary.Builder
+import           Data.Binary.Put                ( runPut )
 import qualified Data.ByteString               as B
 import qualified Data.BEncode                  as BE
 import qualified Data.Map.Strict               as M
 import qualified Data.HashMap.Strict           as HM
 import           Data.Word
 import           Network.Socket
+import           Data.Digest.SHA1
 import           Data.Bits
 
-type Infohash = B.ByteString
-type PeerID = B.ByteString
+instance Ord Word160 where
+  compare (Word160 a1 b1 c1 d1 e1) (Word160 a2 b2 c2 d2 e2) =
+    case compare a1 a2 of
+      EQ -> case compare b1 b2 of
+        EQ -> case compare c1 c2 of
+          EQ -> case compare d1 d2 of
+            EQ -> compare e1 e2
+            x  -> x
+          x -> x
+        x -> x
+      x -> x
 
-validInfoHash :: B.ByteString -> Maybe Infohash
-validInfoHash a = if (B.length a) == 20 then return a else Nothing
+instance Binary Word160 where
+  get = liftM5 Word160 get get get get get
+  put (Word160 a b c d e) = do
+    put a
+    put b
+    put c
+    put d
+    put e
 
-validPeer :: B.ByteString -> Maybe PeerID
-validPeer a = if (B.length a) == 20 then return a else Nothing
+type Infohash = Word160
+type PeerID = Word160
+
+w160toBString :: Word160 -> B.ByteString
+w160toBString = toStrict . runPut . put
 
 data Event = Started | Completed | Stopped
     deriving (Eq, Ord, Show)
@@ -102,7 +124,7 @@ bencodePeers peers = BE.BList (map bencodePeer peers)
         ip = fromStrict $ B8.intersperse '.' $ B.pack [a, b, c, d]
         port               = (read . show) p :: Word32
     in  BE.BDict $ M.fromList
-          [ ("peer_id", (BE.BString $ fromStrict $ peerID peer))
+          [ ("peer_id", (BE.BString $ runPut . put $ peerID peer))
           , ("ip"     , (BE.BString ip))
           , ("port"   , (w32toInteger port))
           ]
@@ -116,8 +138,10 @@ bencodeScrape sr = BE.BDict $ M.fromList
 
 bencodeScrapes :: [(Infohash, ScrapeRes)] -> B8.ByteString
 bencodeScrapes srs =
-  let fileDictList = map (\(ih, sr) -> (B8.unpack ih, bencodeScrape sr)) srs
-      fileDict     = (BE.BDict . M.fromList) fileDictList
+  let fileDictList = map
+        (\(ih, sr) -> ((B8.unpack . w160toBString) ih, bencodeScrape sr))
+        srs
+      fileDict = (BE.BDict . M.fromList) fileDictList
   in  (toStrict . BE.bPack . BE.BDict . M.fromList) [("files", fileDict)]
 
 emptyScrapeRes :: ScrapeRes

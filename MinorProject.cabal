@@ -8,9 +8,30 @@ maintainer:          anjansrihari14@gmail.com
 build-type:          Simple
 extra-source-files:  CHANGELOG.md
 
+test-suite PeerFinder
+  main-is: Test/PeerFinder.hs
+  type: exitcode-stdio-1.0
+  hs-source-dirs:      src
+  build-depends: 
+       base >= 4.7 && < 5,
+       containers >= 0.6.0 && < 0.7,
+       QuickCheck >= 2.6,
+       test-framework >= 0.8,
+       test-framework-quickcheck2 >= 0.3,
+       unordered-containers >= 0.2.11 && < 0.3,
+       bencode              >= 0.6.1 && < 0.7,
+       bytestring >= 0.10.8 && < 0.11,
+       network              >= 3.1.1 && < 3.2,
+       attoparsec >= 0.13.2 && < 0.14,
+       Crypto >= 4.2,
+       binary >= 0.8.6 && < 0.9,
+       MonadRandom
+  other-modules: Network.Torrent.Tracker.AnnounceReqTypes,
+                 Network.Torrent.Tracker.PeerAccess 
+  default-language: Haskell2010 
 
-executable torrDB-init
-  main-is: exec/torrDB-init.hs 
+executable torrdb-init
+  main-is: Exec/torrdb-init.hs 
   build-depends: 
       base                 >= 4.7   && <   5, 
       mtl                  >= 2.2.2 && < 2.3,
@@ -18,6 +39,47 @@ executable torrDB-init
       text                 >= 1.2.3 && < 1.3,
       mongoDB              >= 2.7.0 && < 2.8,
       process
+  default-language: Haskell2010  
+  hs-source-dirs: src
+
+executable hask-tracker
+  main-is: Exec/hask-tracker.hs 
+  hs-source-dirs: src
+  build-depends: 
+      base >= 4.7 && < 5, 
+      cryptohash           == 0.11.9, 
+      snap-server,
+      bson                 >= 0.3 && < 0.5,
+      Crypto               >= 4.2 && < 5,
+      MonadRandom          >= 0.5.2 && < 0.6,
+      mtl                  >= 2.2.2 && < 2.3,
+      transformers         >= 0.5.6 && < 0.6,
+      bytestring           >= 0.10.8 && < 0.11,
+      uri-encode,
+      time                 >= 1.8.0 && < 1.9,
+      attoparsec           >= 0.13.2 && < 0.14,
+      containers           >= 0.6.0 && < 0.7,
+      binary               >= 0.8.6 && < 0.9,
+      text                 >= 1.2.3 && < 1.3,
+      bencode              >= 0.6.1 && < 0.7,
+      network              >= 3.1.1 && < 3.2,
+      cpu                  >= 0.1.2 && < 0.2,
+      mongoDB              >= 2.7.0 && < 2.8,
+      split                >= 0.2.3 && < 0.3,
+      unordered-containers >= 0.2.11 && < 0.3,
+      saltine              >= 0.1.1 && < 0.2,
+      snap-core            >= 1.0.4 && < 1.1,
+      time-compat          >= 1.9.3 && < 1.10,
+      typesafe-endian      >= 0.1.0 && < 0.2
+  other-modules:
+       Network.Torrent.Tracker.AnnounceReqTypes,
+       Network.Torrent.Tracker.AnnounceServer,
+       Network.Torrent.Tracker.AnnounceSrv,
+       Control.Monad.Trans.ContEither,
+       Network.Torrent.Tracker.PeerAccess,
+       Network.Torrent.Tracker.QueryParsers
+  default-language: Haskell2010 
+  
 library
   exposed-modules:
        Network.Torrent.Tracker.AnnounceReqTypes,
@@ -33,18 +95,12 @@ library
        Data.Torrent.DB.BsonValueReader
   build-depends:    
       base >= 4.7 && < 5, 
-  --    bytestring,
-  --    bencode >= 0.6, containers,
-  --    unordered-containers, network >= 2.8,
-  --    transformers , binary >= 0.8,
-  --    typesafe-endian >= 0.1,  snap-core >= 1.0,
-  --    cpu , time, saltine, split, 
-  --    mtl , MonadRandom >= 0.5, mongoDB >= 2.7,
-  --    attoparsec >= 0.12, text , time-compat,
       cryptohash           == 0.11.9, 
       bson                 >= 0.3 && < 0.5,
+      Crypto               >= 4.2 && < 5,
       MonadRandom          >= 0.5.2 && < 0.6,
       mtl                  >= 2.2.2 && < 2.3,
+      uri-encode,
       transformers         >= 0.5.6 && < 0.6,
       bytestring           >= 0.10.8 && < 0.11,
       time                 >= 1.8.0 && < 1.9,
@@ -63,5 +119,5 @@ library
       time-compat          >= 1.9.3 && < 1.10,
       typesafe-endian      >= 0.1.0 && < 0.2
   hs-source-dirs:      src
-
   default-language:    Haskell2010
+

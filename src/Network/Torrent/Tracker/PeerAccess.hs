@@ -16,6 +16,7 @@ module Network.Torrent.Tracker.PeerAccess
   , getPeerCount
   , getPeers
   , removePID
+  , peerSize
   )
 where
 
@@ -201,3 +202,6 @@ getPeerCount mphr = do
     , fromIntegral $ (M.size . rplReverse) leeches
     , complete
     )
+
+peerSize :: RdmPeerList -> Int
+peerSize = M.size . rplReverse

@@ -12,10 +12,11 @@ where
 import           Network.Socket
 import           Control.Monad.Trans.ContEither
 import           Network.Torrent.Tracker.AnnounceReqTypes
-
+import           Data.Digest.SHA1
 import           Control.Applicative
 import           Data.Attoparsec.ByteString.Char8
 import           Data.Binary
+import qualified Network.URI.Encode            as URL
 import           Data.Binary.Get
 import           Data.Bits
 import           Data.Word
@@ -123,14 +124,14 @@ validSockAddr pnum name str =
   in  maybeParse name str ipParse
 
 valid20Bytes
-  :: B.ByteString -> B.ByteString -> ContEitherT m B.ByteString B.ByteString
+  :: B.ByteString -> B.ByteString -> ContEitherT m B.ByteString Word160
 valid20Bytes name str = case B.length str of
   20 -> case runGetOrFail get (BL.fromStrict str) of
     Left  _                    -> left (errorMsg name)
     Right (rem, count, result) -> do
       failIf (name <> B8.pack " incorrect length")
              (count /= 20 || not (BL.null rem))
-      return result
+      return . decode $ BL.fromStrict . B8.pack . URL.decode $ result
   _ -> left (errorMsg name)
 
 
