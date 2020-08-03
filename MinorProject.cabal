@@ -20,6 +20,10 @@ test-suite PeerFinder
        test-framework-quickcheck2 >= 0.3,
        unordered-containers >= 0.2.11 && < 0.3,
        bencode              >= 0.6.1 && < 0.7,
+       hashable,
+       primitive,
+       mwc-random,
+       transformers,
        bytestring >= 0.10.8 && < 0.11,
        network              >= 3.1.1 && < 3.2,
        attoparsec >= 0.13.2 && < 0.14,
@@ -42,53 +46,17 @@ executable torrdb-init
   default-language: Haskell2010  
   hs-source-dirs: src
 
-executable hask-tracker
-  main-is: Exec/hask-tracker.hs 
-  hs-source-dirs: src
-  build-depends: 
-      base >= 4.7 && < 5, 
-      cryptohash           == 0.11.9, 
-      snap-server,
-      bson                 >= 0.3 && < 0.5,
-      Crypto               >= 4.2 && < 5,
-      MonadRandom          >= 0.5.2 && < 0.6,
-      mtl                  >= 2.2.2 && < 2.3,
-      transformers         >= 0.5.6 && < 0.6,
-      bytestring           >= 0.10.8 && < 0.11,
-      uri-encode,
-      time                 >= 1.8.0 && < 1.9,
-      attoparsec           >= 0.13.2 && < 0.14,
-      containers           >= 0.6.0 && < 0.7,
-      binary               >= 0.8.6 && < 0.9,
-      text                 >= 1.2.3 && < 1.3,
-      bencode              >= 0.6.1 && < 0.7,
-      network              >= 3.1.1 && < 3.2,
-      cpu                  >= 0.1.2 && < 0.2,
-      mongoDB              >= 2.7.0 && < 2.8,
-      split                >= 0.2.3 && < 0.3,
-      unordered-containers >= 0.2.11 && < 0.3,
-      saltine              >= 0.1.1 && < 0.2,
-      snap-core            >= 1.0.4 && < 1.1,
-      time-compat          >= 1.9.3 && < 1.10,
-      typesafe-endian      >= 0.1.0 && < 0.2
-  other-modules:
-       Network.Torrent.Tracker.AnnounceReqTypes,
-       Network.Torrent.Tracker.AnnounceServer,
-       Network.Torrent.Tracker.AnnounceSrv,
-       Control.Monad.Trans.ContEither,
-       Network.Torrent.Tracker.PeerAccess,
-       Network.Torrent.Tracker.QueryParsers
-  default-language: Haskell2010 
-  
 library
   exposed-modules:
        Network.Torrent.Tracker.AnnounceReqTypes,
-       Network.Torrent.Tracker.AnnounceServer,
+      -- Network.Torrent.Tracker.AnnounceServer,
        Network.Torrent.Tracker.AnnounceSrv,
        Control.Monad.Trans.ContEither,
        Network.Torrent.Tracker.PeerAccess,
        Network.Torrent.Tracker.QueryParsers,
-       Data.Torrent.DB
+       Data.Torrent.DB,
+       Network.Torrent.Tracker.Trial 
+       Network.Torrent.Tracker.AnnounceUDP
   other-modules:
        Data.Torrent.DB.ToBSON,
        Data.Torrent.DB.FromBSON,
@@ -101,6 +69,7 @@ library
       MonadRandom          >= 0.5.2 && < 0.6,
       mtl                  >= 2.2.2 && < 2.3,
       uri-encode,
+      warp,
       transformers         >= 0.5.6 && < 0.6,
       bytestring           >= 0.10.8 && < 0.11,
       time                 >= 1.8.0 && < 1.9,
@@ -113,6 +82,11 @@ library
       cpu                  >= 0.1.2 && < 0.2,
       mongoDB              >= 2.7.0 && < 2.8,
       split                >= 0.2.3 && < 0.3,
+      hashable,
+      servant-server,
+      mwc-random,
+      primitive,
+      http-types,
       unordered-containers >= 0.2.11 && < 0.3,
       saltine              >= 0.1.1 && < 0.2,
       snap-core            >= 1.0.4 && < 1.1,

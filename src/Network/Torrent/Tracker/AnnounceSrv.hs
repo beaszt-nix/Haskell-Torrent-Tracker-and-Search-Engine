@@ -1,18 +1,6 @@
 {-# LANGUAGE BangPatterns, TupleSections, BlockArguments #-}
 
-module Network.Torrent.Tracker.AnnounceSrv
-  ( AnnounceConf(..)
-  , AnnounceEnv(..)
-  , AnnounceST(..)
-  , AnnounceT(..)
-  , IPVer(..)
-  , defConf
-  , emptyAnnounceST
-  , hdlAnnounce
-  , handleScrape
-  , pruneQ
-  )
-where
+module Network.Torrent.Tracker.AnnounceSrv where
 
 import           Network.Torrent.Tracker.AnnounceReqTypes
 import           Network.Torrent.Tracker.PeerAccess
@@ -27,19 +15,27 @@ import           Data.List                      ( foldl' )
 import           Data.Maybe
 import           Data.Time.Clock
 import           Data.Traversable
+import           Data.Hashable
 import           Data.Word
 import           Network.Socket
+import           Data.Time.Calendar             ( toModifiedJulianDay )
 import qualified Data.ByteString               as B
-import qualified Data.Map                      as M
-import qualified Data.Set                      as S
+import qualified Data.HashMap.Strict           as M
+import qualified Data.HashSet                  as S
 
-type ActivePeer = M.Map PeerID UTCTime
-type ActiveQueue = S.Set (UTCTime, Maybe PeerID)
+type ActivePeer = M.HashMap PeerID UTCTime
+type ActiveQueue = S.HashSet (UTCTime, PeerID)
+
+instance Hashable UTCTime where
+  hashWithSalt salt (UTCTime d dt) =
+    salt
+      `hashWithSalt` (toModifiedJulianDay d)
+      `hashWithSalt` (diffTimeToPicoseconds dt)
 
 data AnnounceST  = AnnounceST {
-        activeHash :: MVar (M.Map Infohash HashRec),
-        prLastSeen :: MVar (M.Map Infohash (MVar ActivePeer)),
-        prActiveQueue :: MVar (M.Map Infohash (MVar ActiveQueue))
+        activeHash :: MVar (M.HashMap Infohash HashRec),
+        prLastSeen :: MVar (M.HashMap Infohash (MVar ActivePeer)),
+        prActiveQueue :: MVar (M.HashMap Infohash (MVar ActiveQueue))
 }
 
 emptyAnnounceST :: IO AnnounceST
@@ -63,15 +59,12 @@ data AnnounceConf = AnnounceConf {
 }
 
 defConf :: AnnounceConf
-defConf = AnnounceConf
-  { ancInterval    = 120
-  , ancMaxPeer     = 50
-  , ancDefPeer     = 30
-  , ancIdleTimeOut = 360
-  , ancAddrs       = [ ("0.0.0.0", "6969")
-                     , ("::"     , "6970") --ipv6
-                     ]
-  }
+defConf = AnnounceConf { ancInterval    = 120
+                       , ancMaxPeer     = 50
+                       , ancDefPeer     = 30
+                       , ancIdleTimeOut = 360
+                       , ancAddrs       = [("0.0.0.0", "6969"), ("::", "6970")]
+                       }
 
 -- Environment Data to store.
 data AnnounceEnv = AnnounceEnv {
@@ -87,122 +80,105 @@ getState = asks anSt
 getConf :: AnnounceT AnnounceConf
 getConf = asks anConf
 
-pruneQ :: AnnounceT ()
-pruneQ = do
-  now     <- liftIO getCurrentTime
-  st      <- getState
-  hrMap   <- liftIO $ takeMVar (activeHash st)
-  lstSeen <- liftIO $ takeMVar (prLastSeen st)
-  queue   <- liftIO $ takeMVar (prActiveQueue st)
+pruneQueue :: AnnounceT ()
+pruneQueue = do
+  now         <- liftIO getCurrentTime
+  st          <- getState
+  hrMap       <- liftIO $ takeMVar $ activeHash st
+  lastSeen    <- liftIO $ takeMVar $ prLastSeen st
+  activeQueue <- liftIO $ takeMVar $ prActiveQueue st
+
+  forM_ (M.toList lastSeen) $ \(hash, hashActivityMVar) -> do
+    let activeQueueMvar = activeQueue M.! hash
+        hashRecord      = hrMap M.! hash
+    pruneHashQueue now hashActivityMVar activeQueueMvar hashRecord
 
   liftIO $ putMVar (activeHash st) hrMap
-  liftIO $ putMVar (prLastSeen st) lstSeen
-  liftIO $ putMVar (prActiveQueue st) queue
-
-  forM_ (M.assocs lstSeen) $ \(hash, hashActivityM) -> do
-    let hashQM = queue M.! hash
-    let hr     = hrMap M.! hash
-    pruneHQ now hashActivityM hashQM hr
-
-pruneHQ
-  :: UTCTime -> MVar ActivePeer -> MVar ActiveQueue -> HashRec -> AnnounceT ()
-pruneHQ now hashActivityM hashQM hr = do
-  activity <- liftIO $ takeMVar hashActivityM
-  queue    <- liftIO $ takeMVar hashQM
-  timeout  <- liftM ancIdleTimeOut getConf
-  let old_now       = addUTCTime (fromIntegral $ negate timeout) now
-  let (old, queue') = S.split (old_now, Nothing) queue
-  let activity' =
-        foldl' (flip (M.delete . fromJust . snd)) activity (S.elems old)
-  liftIO $ putMVar hashActivityM activity'
-  liftIO $ putMVar hashQM queue'
-  liftIO $ forM_ [hrInet4 hr, hrInet6 hr] $ \phrM -> do
-    phr <- takeMVar phrM
-    putMVar phrM $ phr { phrSeeders  = cleanUp old (phrSeeders phr)
-                       , phrLeechers = cleanUp old (phrLeechers phr)
-                       }
-
-cleanUp :: ActiveQueue -> RdmPeerList -> RdmPeerList
-cleanUp old rpl = foldl' (flip (removePID . fromJust . snd)) rpl (S.elems old)
-
-hdlAnnounce :: AnnounceReq -> AnnounceT AnnounceRes
-hdlAnnounce an = do
-  let peer = anPeer an
-      hash = anInfoHash an
-  st <- getState
-  hr <- liftIO $ getHashRec st hash
-  liftIO $ updateActivity st hash peer
-  let phr = getPtclHashRec peer hr
-      peerGetter | anEvent an == Just Completed = \count phr -> return []
-                 | isSeeder an                  = getLeech
-                 | otherwise                    = getPeers
-  maxPeers <- liftM ancMaxPeer getConf
-  defPeers <- liftM ancDefPeer getConf
-  let peerWanted = case anEvent an of
-        Just Completed -> 0
-        otherwise      -> fromMaybe defPeers (anWant an)
-      peerCount = min maxPeers peerWanted
-  peers    <- liftIO $ peerGetter (fromIntegral peerCount) phr
-  interval <- liftM ancInterval getConf
-  addOrRemovePeer an
-  (nSeed, nLeech, _) <- liftIO $ getPeerCount phr
-  return PeerList { plInterval = fromIntegral interval
-                  , plSeeders  = Just nSeed
-                  , plLeechers = Just nLeech
-                  , plPeers    = peers
-                  }
-
-updateActivity :: AnnounceST -> Infohash -> Peer -> IO ()
-updateActivity st hash peer = do
-  lastSeenMap <- takeMVar (prLastSeen st)
-  qMap        <- takeMVar (prActiveQueue st)
-  case M.lookup hash lastSeenMap of
-    Nothing -> do
-      nLastSeen <- newMVar M.empty
-      nQueue    <- newMVar S.empty
-      putMVar (prLastSeen st) $ M.insert hash nLastSeen lastSeenMap
-      putMVar (prActiveQueue st) $ M.insert hash nQueue qMap
-      updateHashActivity peer nLastSeen nQueue
-    Just lastSeen -> do
-      putMVar (prLastSeen st)    lastSeenMap
-      putMVar (prActiveQueue st) qMap
-      let activityQueue = qMap M.! hash
-      updateHashActivity peer lastSeen activityQueue
+  liftIO $ putMVar (prLastSeen st) lastSeen
+  liftIO $ putMVar (prActiveQueue st) activeQueue
  where
-  updateHashActivity peer lastSeenM qM = do
-    let pid = peerID peer
-    now      <- getCurrentTime
-    lastSeen <- takeMVar lastSeenM
-    queue    <- takeMVar qM
-    case M.lookup pid lastSeen of
-      Nothing -> do
-        putMVar lastSeenM $ M.insert pid now lastSeen
-        putMVar qM $ S.insert (now, Just pid) queue
-      Just oldNow -> do
-        putMVar lastSeenM $ M.insert pid now lastSeen
-        putMVar qM $ S.insert (now, Just pid) $ S.delete (oldNow, Just pid)
-                                                         queue
+  pruneHashQueue
+    :: UTCTime -> MVar ActivePeer -> MVar ActiveQueue -> HashRec -> AnnounceT ()
+  pruneHashQueue now hashActiveMVar activeQueueMvar hashRec = do
+    activityHashes <- liftIO $ takeMVar $ hashActiveMVar
+    activeQueue    <- liftIO $ takeMVar $ activeQueueMvar
+    timout         <- liftM ancIdleTimeOut getConf
+
+    let
+      oldNow = addUTCTime (fromIntegral $ negate timout) now
+      old =
+        S.map (\x -> snd x) . S.filter (\x -> (fst x) < oldNow) $ activeQueue
+      activeHashes =
+        M.filterWithKey (\k _ -> not $ S.member k old) activityHashes
+
+    liftIO $ putMVar hashActiveMVar activeHashes
+    liftIO $ putMVar activeQueueMvar $ S.filter
+      (\(_, v) -> not $ S.member v old)
+      activeQueue
+    liftIO $ forM_ [hrInet4 hashRec, hrInet6 hashRec] $ \phrM -> do
+      phr <- takeMVar phrM
+      putMVar phrM $ phr { phrSeeders = clean old (phrSeeders phr)
+                         , phrLeecher = clean old (phrLeecher phr)
+                         }
+    where clean old rdm = S.foldl' (flip removePID) rdm old
 
 getHashRec :: AnnounceST -> Infohash -> IO HashRec
 getHashRec st hash = do
-  hrMap <- takeMVar (activeHash st)
-  case M.lookup hash hrMap of
+  activeHashes <- liftIO $ takeMVar (activeHash st)
+  case M.lookup hash activeHashes of
     Just hr -> do
-      putMVar (activeHash st) hrMap
+      putMVar (activeHash st) activeHashes
       return hr
     Nothing -> do
-      hr <- emptyHashRec
-      putMVar (activeHash st) $ M.insert hash hr hrMap
+      hr <- emptyHR
+      putMVar (activeHash st) $ M.insert hash hr activeHashes
       return hr
 
-getPtclHashRec :: Peer -> HashRec -> MVar PtclHashRec
-getPtclHashRec peer hr = case peerAddr peer of
+
+updateHashActivity :: Peer -> MVar ActivePeer -> MVar ActiveQueue -> IO ()
+updateHashActivity peer actPeerM actQueueM = do
+  let pid = peerID peer
+  now      <- getCurrentTime
+  lastSeen <- takeMVar actPeerM
+  actQueue <- takeMVar actQueueM
+  case M.lookup pid lastSeen of
+    Nothing -> do
+      putMVar actPeerM $ M.insert pid now lastSeen
+      putMVar actQueueM $ S.insert (now, pid) actQueue
+    Just on -> do
+      putMVar actPeerM $ M.insert pid now lastSeen
+      putMVar actQueueM $ S.insert (now, pid) $ S.delete (on, pid) actQueue
+
+updateActivity :: AnnounceST -> Infohash -> Peer -> IO ()
+updateActivity st hash peer = do
+  lastSeen    <- takeMVar (prLastSeen st)
+  activeQueue <- takeMVar (prActiveQueue st)
+  case M.lookup hash lastSeen of
+    Nothing -> do
+      newLastSeen <- newMVar M.empty
+      newQueue    <- newMVar S.empty
+      putMVar (prLastSeen st) $ M.insert hash newLastSeen lastSeen
+      putMVar (prActiveQueue st) $ M.insert hash newQueue activeQueue
+      updateHashActivity peer newLastSeen newQueue
+    Just ls -> do
+      putMVar (prLastSeen st)    lastSeen
+      putMVar (prActiveQueue st) activeQueue
+      let activityQueue = activeQueue M.! hash
+      updateHashActivity peer ls activityQueue
+
+getPHR :: Peer -> HashRec -> MVar PtclHashRec
+getPHR peer hr = case peerAddr peer of
   SockAddrInet{}  -> hrInet4 hr
   SockAddrInet6{} -> hrInet6 hr
-  otherwise       -> error "No socket support"
+  otherwise       -> error "Socket Not supported"
+
+peerGetter :: AnnounceReq -> Int -> MVar PtclHashRec -> IO [Peer]
+peerGetter an | anEvent an == Just Completed = \_ _ -> return []
+              | isSeeder an                  = getLeech
+              | otherwise                    = getPeers
 
 isSeeder :: AnnounceReq -> Bool
-isSeeder an = anLeft an == 0
+isSeeder = (==) 0 . anLeft
 
 data PeerAction = Add | Shift | Remove
 
@@ -232,12 +208,12 @@ addOrRemovePeer an = do
     activeMap <- liftIO $ takeMVar activeMapM
     hr        <- case M.lookup (anInfoHash an) activeMap of
       Nothing -> liftIO $ do
-        newHr <- emptyHashRec
+        newHr <- emptyHR
         putMVar activeMapM $ M.insert (anInfoHash an) newHr activeMap
         return newHr
       Just hr -> return hr
     liftIO $ putMVar activeMapM activeMap
-    let phrM = getPtclHashRec (anPeer an) hr
+    let phrM = getPHR (anPeer an) hr
     phr <- liftIO $ takeMVar phrM
     let
       (seedUpdater, leechUpdater, compInc) = case act of
@@ -247,10 +223,10 @@ addOrRemovePeer an = do
         Remove -> makeUpdaters (return . removePID (peerID (anPeer an))) an
     liftIO $ do
       seeders'  <- seedUpdater (phrSeeders phr)
-      leechers' <- leechUpdater (phrLeechers phr)
-      putMVar phrM $ phr { phrSeeders       = seeders'
-                         , phrLeechers      = leechers'
-                         , phrCompleteCount = compInc (phrCompleteCount phr)
+      leechers' <- leechUpdater (phrLeecher phr)
+      putMVar phrM $ phr { phrSeeders  = seeders'
+                         , phrLeecher  = leechers'
+                         , phrComplete = compInc (phrComplete phr)
                          }
    where
     makeUpdaters
@@ -263,19 +239,45 @@ addOrRemovePeer an = do
     makeUpdaters mod an =
       if isSeeder an then (mod, return, id) else (return, mod, id)
 
-data IPVer = IP4 | IP6
+handleAnnounce :: AnnounceReq -> AnnounceT AnnounceRes
+handleAnnounce an = do
+  let peer = anPeer an
+      hash = anInfoHash an
+  st <- getState
+  hr <- liftIO $ getHashRec st hash
+  liftIO $ updateActivity st hash peer
 
-handleScrape :: IPVer -> [ScrapeReq] -> AnnounceT [ScrapeRes]
-handleScrape ipVer hashes = do
+  let phr = getPHR peer hr
+
+  maxPeer <- liftM ancMaxPeer getConf
+  defPeer <- liftM ancDefPeer getConf
+
+  let numWant = case anEvent an of
+        Just Completed -> 0
+        otherwise      -> fromMaybe defPeer (anWant an)
+      pc = min maxPeer numWant
+
+  peers    <- liftIO $ peerGetter an (fromIntegral pc) phr
+  interval <- liftM ancInterval getConf
+  addOrRemovePeer an
+  (ns, nl, _) <- liftIO $ getPeersCount phr
+  return PeerList { plInterval = fromIntegral interval
+                  , plSeeders  = Just ns
+                  , plLeechers = Just nl
+                  , plPeers    = peers
+                  }
+
+
+data IPV = IP4 | IP6
+
+handleScrape :: IPV -> [ScrapeReq] -> AnnounceT [ScrapeRes]
+handleScrape ipV hashes = do
   hashRec <- liftIO . readMVar =<< asks (activeHash . anSt)
   forM hashes $ \hash -> liftIO $ case M.lookup hash hashRec of
     Nothing -> return emptyScrapeRes
     Just hr -> do
-      let mphr = case ipVer of
+      let mphr = case ipV of
             IP4 -> hrInet4 hr
             IP6 -> hrInet6 hr
-      (seeders, leechers, completed) <- getPeerCount mphr
-      return ScrapeRes { srSeeders     = seeders
-                       , srLeechers    = leechers
-                       , srCompletions = completed
-                       }
+      (s, l, c) <- getPeersCount mphr
+      return ScrapeRes { srSeeders = s, srLeechers = l, srCompletions = c }

@@ -82,14 +82,14 @@ prop_size_decreases rpl = if peerSize rpl == 0
 choosePeer :: RdmPeerList -> Gen (Maybe Peer)
 choosePeer rpl = do
   n <- choose (0, peerSize rpl - 1)
-  let (k, r) = M.elemAt n $ rplReverse rpl
-      curMap = rplCurrent rpl
-      nexMap = rplNext rpl
+  let (k, r) = M.elemAt n $ plPeerL rpl
+      curMap = plCurrent rpl
+      nexMap = plNext rpl
   return $ M.lookup (r, k) curMap `mplus` M.lookup (r, k) nexMap
 
 prop_sum_sizes :: RdmPeerList -> Bool
 prop_sum_sizes rpl =
-  M.size (rplCurrent rpl) + M.size (rplNext rpl) == peerSize rpl
+  M.size (plCurrent rpl) + M.size (plNext rpl) == peerSize rpl
 
 getSomePeers :: RdmPeerList -> Gen ([Peer], RdmPeerList, Int)
 getSomePeers rpl = do
@@ -114,8 +114,8 @@ prop_get_peers_consistent rpl = do
   return $ getAllPID rpl == getAllPID rpl'
 
 getAllPID rpl =
-  let currSet = S.fromList $ map peerID $ M.elems (rplCurrent rpl)
-      nextSet = S.fromList $ map peerID $ M.elems (rplNext rpl)
+  let currSet = S.fromList $ map peerID $ M.elems (plCurrent rpl)
+      nextSet = S.fromList $ map peerID $ M.elems (plNext rpl)
   in  currSet `S.union` nextSet
 
 prop_add_peer_has :: Peer -> RdmPeerList -> Gen Bool
@@ -134,8 +134,8 @@ prop_remove_peer_nohas rpl = if peerSize rpl == 0
 
 prop_has_all_peers :: RdmPeerList -> Bool
 prop_has_all_peers rpl =
-  let currMap = rplCurrent rpl
-      nextMap = rplNext rpl
+  let currMap = plCurrent rpl
+      nextMap = plNext rpl
   in  all (`hasPeer` rpl) $ M.elems currMap ++ M.elems nextMap
 
 instance Arbitrary Word160 where
@@ -189,10 +189,10 @@ instance Arbitrary RdmPeerList where
           then []
           else do
             x <- [0 .. rSize - 1]
-            let (k, r) = M.elemAt x (rplReverse rpl)
-            return RdmPeerList { rplCurrent = M.delete (r, k) (rplCurrent rpl)
-                               , rplNext    = M.delete (r, k) (rplNext rpl)
-                               , rplReverse = M.delete k (rplReverse rpl)
+            let (k, r) = M.elemAt x (plPeerL rpl)
+            return RdmPeerList { plCurrent = M.delete (r, k) (plCurrent rpl)
+                               , plNext    = M.delete (r, k) (plNext rpl)
+                               , plPeerL   = M.delete k (plPeerL rpl)
                                }
 
 instance Arbitrary StdGen where

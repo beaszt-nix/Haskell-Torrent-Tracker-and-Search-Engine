@@ -12,6 +12,7 @@ module Network.Torrent.Tracker.AnnounceReqTypes
   , ScrapeRes(..)
   , bencodeRes
   , bencodeScrapes
+  , bencodeScrape
   , bencodePeers
   , emptyScrapeRes
   , isRFC1918
@@ -35,6 +36,10 @@ import           Data.Word
 import           Network.Socket
 import           Data.Digest.SHA1
 import           Data.Bits
+import           Data.Hashable
+
+instance Hashable Word160 where
+  hashWithSalt salt w160 = hashWithSalt salt $ encode w160
 
 instance Ord Word160 where
   compare (Word160 a1 b1 c1 d1 e1) (Word160 a2 b2 c2 d2 e2) =
