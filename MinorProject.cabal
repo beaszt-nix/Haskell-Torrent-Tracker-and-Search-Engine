@@ -46,21 +46,24 @@ executable torrdb-init
   default-language: Haskell2010  
   hs-source-dirs: src
 
-library
-  exposed-modules:
-       Network.Torrent.Tracker.AnnounceReqTypes,
-      -- Network.Torrent.Tracker.AnnounceServer,
-       Network.Torrent.Tracker.AnnounceSrv,
+executable hask-tracker
+  main-is: Exec/hask-tracker.hs
+  
+  other-modules:
        Control.Monad.Trans.ContEither,
+
+       Network.Torrent.Tracker.AnnounceServer,
        Network.Torrent.Tracker.PeerAccess,
        Network.Torrent.Tracker.QueryParsers,
+       Network.Torrent.Tracker.AnnounceReqTypes,
+       Network.Torrent.Tracker.AnnounceSrv,
+       Network.Torrent.Tracker.AnnounceUDP,
+
        Data.Torrent.DB,
-       Network.Torrent.Tracker.Trial 
-       Network.Torrent.Tracker.AnnounceUDP
-  other-modules:
        Data.Torrent.DB.ToBSON,
        Data.Torrent.DB.FromBSON,
        Data.Torrent.DB.BsonValueReader
+  
   build-depends:    
       base >= 4.7 && < 5, 
       cryptohash           == 0.11.9, 
@@ -94,4 +97,3 @@ library
       typesafe-endian      >= 0.1.0 && < 0.2
   hs-source-dirs:      src
   default-language:    Haskell2010
-

@@ -84,7 +84,7 @@ announceAction env = do
     writeBS message
     getResponse >>= finishWith
   success announce = do
-    res <- liftIO $ runReaderT (hdlAnnounce announce) env
+    res <- liftIO $ runReaderT (handleAnnounce announce) env
     writeLBS $ fromStrict $ encoder res
     getResponse >>= finishWith
    where
@@ -115,7 +115,7 @@ scrapeAction env = do
     writeBS msg
     getResponse >>= finishWith
 
-rGetIpVer :: Request -> ContEitherT m B.ByteString IPVer
+rGetIpVer :: Request -> ContEitherT m B.ByteString IPV
 rGetIpVer req = do
   let port = (fromIntegral . rqClientPort) req
   reqAddr <- validSockAddr port B8.empty (rqClientAddr req)
