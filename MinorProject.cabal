@@ -61,6 +61,7 @@ executable database-check
       network,
       servant,
       hashable,
+      base16-bytestring,
       http-media,
       text,
       cryptohash,
@@ -91,12 +92,7 @@ executable hask-tracker
        Network.Torrent.Tracker.PeerAccess,
        Network.Torrent.Tracker.AnnounceReqTypes,
        Network.Torrent.Tracker.AnnounceSrv,
-       Network.Torrent.Tracker.AnnounceUDP,
-
-       Data.Torrent.DB,
-       Data.Torrent.DB.ToBSON,
-       Data.Torrent.DB.FromBSON,
-       Data.Torrent.DB.BsonValueReader
+       Network.Torrent.Tracker.AnnounceUDP
   
   build-depends:    
       base >= 4.7 && < 5, 

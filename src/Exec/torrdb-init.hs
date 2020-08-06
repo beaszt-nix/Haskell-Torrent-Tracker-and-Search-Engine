@@ -26,8 +26,9 @@ main = do
       labels    = map T.pack ["created by", "comment"]
   access pipe master db' $ auth (T.pack user) (T.pack pass)
   access pipe master db' $ createCollection [] torrents'
-  let idx =
-        "db.torrents.createIndex({'created by': 'text', 'comment': 'text'})"
+  let
+    idx
+      = "db.torrents.createIndex({'created by': 'text', 'comment': 'text', 'description' : 'text', 'tname' : 'text'})"
   readProcess "mongo" ["--host", host, db, "-u", user, "-p", pass] idx >>= print
   close pipe
   return ()

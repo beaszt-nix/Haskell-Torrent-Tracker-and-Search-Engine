@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" 
+  integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" 
+  crossorigin="anonymous">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+<body>
+    <h1> Upload a Torrent File </h1>
+
+  <form class="pure-form pure-form-aligned"
+      action="/upload" method="post" enctype="multipart/form-data" >
+    <fieldset>
+      <div class="pure-control-group">
+        <label for="torrent"> Select file</label >
+        <input type="file" id="torrent" name="torrent"/>
+      </div>
+      <div class="pure-control-group">
+        <label for="description">Description</label>
+        <textarea class="pure-input-1-2" placeholder="description"></textarea>
+      </div>
+      <div class="pure-control-group">
+        <button type="submit" class="pure-button pure-button-primary">Upload</button>
+      </div>
+    </fieldset>
+  </form>
+
+</body>
+</html>
