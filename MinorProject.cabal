@@ -52,9 +52,7 @@ executable hask-tracker
   other-modules:
        Control.Monad.Trans.ContEither,
 
-       Network.Torrent.Tracker.AnnounceServer,
        Network.Torrent.Tracker.PeerAccess,
-       Network.Torrent.Tracker.QueryParsers,
        Network.Torrent.Tracker.AnnounceReqTypes,
        Network.Torrent.Tracker.AnnounceSrv,
        Network.Torrent.Tracker.AnnounceUDP,
@@ -77,6 +75,7 @@ executable hask-tracker
       bytestring           >= 0.10.8 && < 0.11,
       time                 >= 1.8.0 && < 1.9,
       attoparsec           >= 0.13.2 && < 0.14,
+      servant-server,
       containers           >= 0.6.0 && < 0.7,
       binary               >= 0.8.6 && < 0.9,
       text                 >= 1.2.3 && < 1.3,
@@ -86,13 +85,11 @@ executable hask-tracker
       mongoDB              >= 2.7.0 && < 2.8,
       split                >= 0.2.3 && < 0.3,
       hashable,
-      servant-server,
       mwc-random,
       primitive,
       http-types,
       unordered-containers >= 0.2.11 && < 0.3,
       saltine              >= 0.1.1 && < 0.2,
-      snap-core            >= 1.0.4 && < 1.1,
       time-compat          >= 1.9.3 && < 1.10,
       typesafe-endian      >= 0.1.0 && < 0.2
   hs-source-dirs:      src
