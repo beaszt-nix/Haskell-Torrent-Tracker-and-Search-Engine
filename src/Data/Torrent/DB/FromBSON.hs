@@ -5,23 +5,53 @@
 
 module Data.Torrent.DB.FromBSON
   ( bsonToBencode
+  , docToSearchRes
+  , SearchRes(..)
   )
 where
 
 import           Control.Monad
-
+import           Network.Torrent.Tracker.AnnounceReqTypes
+                                                ( Infohash(..) )
 import           Data.BEncode
 import           Data.List
 import           Data.List.Split                ( splitOn )
 import           Data.Maybe
 import           Data.Either                    ( either )
 import           Data.Torrent.DB.BsonValueReader
-
+import           Data.Binary
+import           Data.ByteString.Lazy           ( fromStrict )
 import qualified Data.Text                     as T
 import qualified Data.Bson                     as Bson
 import qualified Data.ByteString.Lazy.Char8    as BL
 import qualified Data.ByteString.Char8         as B
 import qualified Data.Map.Strict               as M
+
+data SearchRes = SearchRes {
+                              srInfoHash :: Infohash,
+                              srTorrName :: T.Text,
+                              srDesc     :: T.Text,
+                              srComment  :: Maybe T.Text,
+                              srCreatedBy :: Maybe T.Text
+                           } deriving Show
+
+optText :: Bson.Value -> Maybe T.Text
+optText (Bson.String t) = return t
+optText _               = Nothing
+
+docToSearchRes :: Bson.Document -> Maybe SearchRes
+docToSearchRes doc = do
+  (Bson.Bin    (Bson.Binary x)) <- Bson.look "info_hash" doc
+  (Bson.String torrName       ) <- Bson.look "tname" doc
+  (Bson.String description    ) <- Bson.look "description" doc
+  let comment = Bson.look "comment" doc >>= optText
+      creator = Bson.look "created by" doc >>= optText
+  return $ SearchRes { srInfoHash  = decode $ fromStrict x
+                     , srTorrName  = torrName
+                     , srDesc      = description
+                     , srComment   = comment
+                     , srCreatedBy = creator
+                     }
 
 toBString :: String -> Maybe BEncode
 toBString = Just . BString . BL.pack
@@ -84,7 +114,7 @@ bsonToBencode doc = do
   info     <- Bson.look "info" doc >>= bsoninfo
   announce <-
     Bson.look "announce" doc >>= runBsonValueReader bsonstring >>= toBString
-  creationBy   <- fromOptional "creation by" creatF $ Bson.look "created by" doc
+  creationBy   <- fromOptional "created by" creatF $ Bson.look "created by" doc
   creationDate <- fromOptional "creation date" dateF
     $ Bson.look "creation date" doc
   comment  <- fromOptional "comment" commenF $ Bson.look "comment" doc

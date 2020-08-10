@@ -4,6 +4,7 @@
 module Data.Torrent.DB
   ( connToDB
   , addTorrent
+  , SearchRes(..)
   , getTorrentFromIH
   , getTorrentFromText
   , nextNTorrent
@@ -76,39 +77,41 @@ addTorrent tname description bs = do
   f (Bin (Binary x)) = B.unpack . B16.encode $ x
   f _                = "Failed."
 
-nextNTorrent :: MonadIO m => Int -> Cursor -> Action m [BEncode]
-nextNTorrent i curs = nextN i curs >>= return . catMaybes . map bsonToBencode
-
-nextTorrent :: MonadIO m => Cursor -> Action m (Maybe BEncode)
-nextTorrent c = next c >>= return . bsonToBencode . fromMaybe []
-
-nextTorrentBatch :: MonadIO m => Cursor -> Action m [BEncode]
-nextTorrentBatch c = nextBatch c >>= return . catMaybes . map bsonToBencode
-
-restTorrent :: MonadIO m => Cursor -> Action m [BEncode]
-restTorrent c = rest c >>= return . catMaybes . map bsonToBencode
-
-getTorrentFromText :: [T.Text] -> Action IO Cursor
+getTorrentFromText :: T.Text -> Action IO Cursor
 getTorrentFromText text = do
   col <- liftIO torrColl
-  let sel = Array
-        $ map (\txt -> Doc $ ["$search" =: Database.MongoDB.String txt]) text
-      query  = select ["$or" =: sel] col :: Query
+  let sel    = ["$search" =: Database.MongoDB.String text]
+      query  = select ["$text" =: sel] col :: Query
       query' = query
-        { project = ["info_hash" =: 0, "tname" =: 0, "description" =: 0]
+        { project = [ "info_hash" =: 1
+                    , "tname" =: 1
+                    , "description" =: 1
+                    , "created by" =: 1
+                    , "comment" =: 1
+                    , "_id" =: 0
+                    ]
         }
   curs <- find query'
   return curs
 
-getTorrentFromIH :: [Infohash] -> Action IO Cursor
+nextNTorrent :: MonadIO m => Int -> Cursor -> Action m [SearchRes]
+nextNTorrent i curs = nextN i curs >>= return . catMaybes . map docToSearchRes
+
+nextTorrent :: MonadIO m => Cursor -> Action m (Maybe SearchRes)
+nextTorrent c = next c >>= return . docToSearchRes . fromMaybe []
+
+nextTorrentBatch :: MonadIO m => Cursor -> Action m [SearchRes]
+nextTorrentBatch c = nextBatch c >>= return . catMaybes . map docToSearchRes
+
+restTorrent :: MonadIO m => Cursor -> Action m [SearchRes]
+restTorrent c = rest c >>= return . catMaybes . map docToSearchRes
+
+getTorrentFromIH :: Infohash -> Action IO (Maybe BEncode)
 getTorrentFromIH ihs = do
   col <- liftIO torrColl
-  let ihls = Array $ map
-        (\ih -> Doc ["info_hash" =: Bin (Binary (w160toBString ih))])
-        ihs
-      query  = select ["$or" =: ihls] col :: Query
-      query' = query
-        { project = ["info_hash" =: 0, "tname" =: 0, "description" =: 0]
-        }
-  curs <- find query'
-  return curs
+  let ihls  = ["info_hash" =: Bin (Binary (w160toBString ihs))]
+      query = select ihls col :: Query
+      query' =
+        query { project = ["info_hash" =: 0, "tname" =: 0, "description" =: 0] }
+  curs <- findOne query'
+  return $ bsonToBencode $ fromMaybe [] curs

@@ -25,11 +25,17 @@ export TorrDBPassWord="password"
 # In the package directory
 cabal v2-build
 # To create the necessary indices in the Database for text search
-cabal v2-run torrDB-init
+cabal v2-run torrdb-init
 # To test tracker libraries in REPL 
 cabal v2-repl hask-tracker
 # To run the tracker 
 cabal v2-run hask-tracker
+
+# For testing out the torrent database,
+# To upload localhost:8080/upload
+# To download localhost:8080/download
+mv static/ /var/www/
+cabal v2-run database-check
 ```
 
 Once started, find the address of the host that is running the tracker over the desired 
