@@ -28,7 +28,7 @@ getNGrams n text
 
 loadStopWords :: IO (HS.HashSet T.Text)
 loadStopWords = do
-  res <- TIO.readFile "/home/anjan/lang-prac/stop"
+  res <- TIO.readFile "/var/www/html/stop"
   return $ HS.fromList $ T.lines res
 
 emptySearchEnv :: IO SearchEnv
