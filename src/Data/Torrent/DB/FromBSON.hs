@@ -30,7 +30,6 @@ import qualified Data.Map.Strict               as M
 data SearchRes = SearchRes {
                               srInfoHash :: Infohash,
                               srTorrName :: T.Text,
-                              srDesc     :: T.Text,
                               srComment  :: Maybe T.Text,
                               srCreatedBy :: Maybe T.Text
                            } deriving Show
@@ -43,12 +42,10 @@ docToSearchRes :: Bson.Document -> Maybe SearchRes
 docToSearchRes doc = do
   (Bson.Bin    (Bson.Binary x)) <- Bson.look "info_hash" doc
   (Bson.String torrName       ) <- Bson.look "tname" doc
-  (Bson.String description    ) <- Bson.look "description" doc
   let comment = Bson.look "comment" doc >>= optText
       creator = Bson.look "created by" doc >>= optText
   return $ SearchRes { srInfoHash  = decode $ fromStrict x
                      , srTorrName  = torrName
-                     , srDesc      = description
                      , srComment   = comment
                      , srCreatedBy = creator
                      }

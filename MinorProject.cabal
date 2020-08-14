@@ -82,6 +82,7 @@ executable db-access
       Data.Torrent.DB,
       Data.Torrent.DB.ToBSON,
       Data.Torrent.DB.FromBSON,
+      Data.Torrent.Search,
       Data.Torrent.DB.BsonValueReader,
       Network.Torrent.Tracker.AnnounceReqTypes,
       Network.Torrent.Web.SearchDiv

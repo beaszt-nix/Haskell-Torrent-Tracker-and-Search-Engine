@@ -7,10 +7,12 @@ module Main where
 import           Control.Monad.IO.Class
 import           Data.Torrent.DB
 import           Network.Torrent.Tracker.AnnounceReqTypes
+import           Control.Monad.Reader           ( runReaderT )
 import           Database.MongoDB.Query
 import           Database.MongoDB.Connection
 import           Servant
 import           Servant.API
+import           Data.Torrent.Search
 import           Servant.API.ContentTypes
 import           Servant.Multipart
 import           Network.HTTP.Media             ( (//)
@@ -43,15 +45,25 @@ type UploadAPI
 type DownloadAPI
   = "download" :> QueryParam "info_hash" String :> Get '[Torrent] (Maybe BEncode)
 type ResultsAPI = "search" :> QueryParam "query" T.Text :> Get '[HTML] H.Html
-type UDAPI = UploadAPI :<|> DownloadAPI :<|> ResultsAPI :<|> Raw
+type SearchResAPI
+  = "search_result" :> QueryParam "info_hash" String :> Get '[HTML] H.Html
+type UDAPI
+  = UploadAPI :<|> DownloadAPI :<|> ResultsAPI :<|> SearchResAPI  :<|> Raw
 
 
-searchHandler :: Pipe -> Maybe T.Text -> Handler H.Html
-searchHandler p t = do
+searchresHandler :: Pipe -> Maybe String -> Handler H.Html
+searchresHandler p string = do
+  let infoHash = Bin.decode . fst . B16L.decode . BL.pack . fromJust $ string
+  db <- liftIO $ torrDB
+  a  <- liftIO $ access p master db $ getTorrentFromIH' infoHash
+  return $ descr a
+
+searchHandler :: SearchEnv -> Pipe -> Maybe T.Text -> Handler H.Html
+searchHandler se p t = do
   case t of
     Just t -> do
       db <- liftIO torrDB
-      c  <- liftIO $ access p master db $ getTorrentFromText t
+      c  <- liftIO $ access p master db $ getTorrentFromText t se
       sr <- liftIO $ access p master db $ restTorrent c
       return $ searchpage sr
     Nothing -> return $ searchpage []
@@ -63,37 +75,37 @@ dlhandler p string = do
   x  <- liftIO $ access p master db $ getTorrentFromIH infoHash
   return x
 
-mpserver :: Pipe -> Server UploadAPI
-mpserver p = mphandler p
+mpserver :: SearchEnv -> Pipe -> Server UploadAPI
+mpserver se p = mphandler se p
  where
   mem :: Proxy Mem
   mem = Proxy
 
-  mphandler :: Pipe -> MultipartData Mem -> Handler String
-  mphandler p mpdata = do
-    let (Right a)   = lookupFile (T.pack "torrent") mpdata
-        description = either (\_ -> "No Description") (T.unpack)
-          $ lookupInput (T.pack "description") mpdata
+  mphandler :: SearchEnv -> Pipe -> MultipartData Mem -> Handler String
+  mphandler se p mpdata = do
+    let (Right a) = lookupFile (T.pack "torrent") mpdata
     let file = fdPayload a :: BL.ByteString
+        name = T.reverse . T.drop 8 . T.reverse . fdFileName $ a
     db <- liftIO $ torrDB
-    liftIO $ access p master db $ addTorrent (fdFileName a)
-                                             (T.pack description)
-                                             file
+    liftIO $ access p master db $ addTorrent name file se
 
-fullserver :: Pipe -> Server UDAPI
-fullserver p =
-  (mpserver p) :<|> (dlhandler p) :<|> searchHandler p :<|> serveDirectoryWebApp
-    "/var/www"
+fullserver :: SearchEnv -> Pipe -> Server UDAPI
+fullserver se p =
+  (mpserver se p)
+    :<|> (dlhandler p)
+    :<|> searchHandler se p
+    :<|> searchresHandler p
+    :<|> serveDirectoryWebApp "/var/www/html"
 
 fullproxy :: Proxy UDAPI
 fullproxy = Proxy
 
-app :: Pipe -> Application
-app p = serve fullproxy $ fullserver p
+app :: SearchEnv -> Pipe -> Application
+app p se = serve fullproxy $ fullserver p se
 
 main :: IO ()
 main = do
   p <- liftIO $ connToDB
   case p of
-    Just p' -> run 8080 $ app p'
+    Just p' -> emptySearchEnv >>= \x -> run 8080 $ app x p'
     Nothing -> error "Unable to connect to database"
