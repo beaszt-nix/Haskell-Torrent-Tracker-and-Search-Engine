@@ -48,7 +48,7 @@ type ResultsAPI = "search" :> QueryParam "query" T.Text :> Get '[HTML] H.Html
 type SearchResAPI
   = "search_result" :> QueryParam "info_hash" String :> Get '[HTML] H.Html
 type UDAPI
-  = UploadAPI :<|> DownloadAPI :<|> ResultsAPI :<|> SearchResAPI  :<|> Raw
+  = ("home" :> Get '[HTML] H.Html) :<|> UploadAPI :<|> DownloadAPI :<|> ResultsAPI :<|> SearchResAPI  :<|> Raw
 
 
 searchresHandler :: Pipe -> Maybe String -> Handler H.Html
@@ -65,6 +65,7 @@ searchHandler se p t = do
       db <- liftIO torrDB
       c  <- liftIO $ access p master db $ getTorrentFromText t se
       sr <- liftIO $ access p master db $ restTorrent c
+      liftIO $ print sr
       return $ searchpage sr
     Nothing -> return $ searchpage []
 
@@ -84,18 +85,22 @@ mpserver se p = mphandler se p
   mphandler :: SearchEnv -> Pipe -> MultipartData Mem -> Handler String
   mphandler se p mpdata = do
     let (Right a) = lookupFile (T.pack "torrent") mpdata
+        descr     = lookupInput (T.pack "description") mpdata
     let file = fdPayload a :: BL.ByteString
         name = T.reverse . T.drop 8 . T.reverse . fdFileName $ a
+    liftIO $ print descr
     db <- liftIO $ torrDB
     liftIO $ access p master db $ addTorrent name file se
 
 fullserver :: SearchEnv -> Pipe -> Server UDAPI
 fullserver se p =
-  (mpserver se p)
+  homeHandler
+    :<|> (mpserver se p)
     :<|> (dlhandler p)
     :<|> searchHandler se p
     :<|> searchresHandler p
     :<|> serveDirectoryWebApp "/var/www/html"
+  where homeHandler = return landing
 
 fullproxy :: Proxy UDAPI
 fullproxy = Proxy

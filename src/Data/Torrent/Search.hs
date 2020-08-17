@@ -44,6 +44,8 @@ genDocNgram doc = do
   (Bson.Doc    info   ) <- Bson.look "info" doc
   (Bson.String name   ) <- Bson.look "name" info
   stopWords             <- asks stopword >>= liftIO . readMVar
+  liftIO $ print $ fromMaybe (Bson.String "nothing") $ Bson.look "description"
+                                                                 doc
 
   let k   = concatMap (T.words . textproc) [comment, tname, creator, name]
       fl3 = concatMap (getNGrams 3) . filter (func stopWords) $ k
