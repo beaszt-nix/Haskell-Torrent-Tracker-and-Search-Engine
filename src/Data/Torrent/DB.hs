@@ -13,6 +13,8 @@ module Data.Torrent.DB
   , restTorrent
   , nextTorrent
   , bencodeToBSON
+  , torSize
+  , smallSize
   , bsonToBencode
   , torrColl
   , torrDB
@@ -20,6 +22,7 @@ module Data.Torrent.DB
 where
 
 import           Database.MongoDB.Query
+import           Data.Fixed
 import           Database.MongoDB
 import           Data.Bson                      ( (=:) )
 import           Control.Monad
@@ -54,6 +57,25 @@ dbUname = liftM T.pack $ getEnv "TorrDBUserName"
 dbPassW :: IO T.Text
 dbPassW = liftM T.pack $ getEnv "TorrDBPassWord"
 
+smallSize :: Integer -> T.Text
+smallSize x =
+  let kb = (fromIntegral x / 1024) :: Fixed E3
+      mb = (kb / 1024)
+      gb = (mb / 1024)
+  in  if kb > 1024
+        then if mb > 1024
+          then T.pack $ (show gb ++ "GB")
+          else T.pack $ (show mb ++ "MB")
+        else T.pack $ (show kb ++ "KB")
+
+torSize :: Document -> Value
+torSize doc =
+  let (Doc   info ) = fromMaybe (Doc []) $ look "info" doc
+      (Array files) = fromMaybe (Array []) $ look "files" info
+      files' = map (\(Doc a) -> fromMaybe (Int32 0) $ look "length" a) files
+      output        = foldr (\(Int32 x) b -> (fromIntegral x) + b) 0 files'
+  in  (String $ smallSize output)
+
 connToDB :: IO (Maybe Pipe)
 connToDB = do
   host   <- dbHost
@@ -75,7 +97,7 @@ addTorrent tname bs se = do
       let res = f . valueAt (T.pack "info_hash") $ gd
           qur = cus ++ gd
       ngrams <- liftIO $ runReaderT (genDocNgram qur) se
-      insert_ col (qur ++ ["ngrams" =: ngrams])
+      insert_ col (qur ++ ["ngrams" =: ngrams, "torrent_size" =: torSize gd])
       return res
     (Left gd) -> return "Failed."
  where
@@ -94,6 +116,7 @@ getTorrentFromText text se = do
                     , "tname" =: 1
                     , "created by" =: 1
                     , "comment" =: 1
+                    , "torrent_size" =: 1
                     , "_id" =: 0
                     ]
         }

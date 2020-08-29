@@ -41,15 +41,15 @@ instance MimeRender Torrent (Maybe BEncode) where
   mimeRender _ Nothing  = BL.pack "Failure. Couldn't find Torrent"
 
 type UploadAPI
-  = "upload" :> MultipartForm Mem  (MultipartData Mem) :> Post '[PlainText] String
+  = "upload" :> MultipartForm Mem  (MultipartData Mem) :> Verb POST 303 '[PlainText] (Headers '[Header "Location" T.Text] NoContent)
 type DownloadAPI
   = "download" :> QueryParam "info_hash" String :> Get '[Torrent] (Maybe BEncode)
 type ResultsAPI = "search" :> QueryParam "query" T.Text :> Get '[HTML] H.Html
 type SearchResAPI
   = "search_result" :> QueryParam "info_hash" String :> Get '[HTML] H.Html
+type UploadTutAPI = "uploadTut" :> Get '[HTML] H.Html
 type UDAPI
-  = ("home" :> Get '[HTML] H.Html) :<|> UploadAPI :<|> DownloadAPI :<|> ResultsAPI :<|> SearchResAPI  :<|> Raw
-
+  = ("home" :> Get '[HTML] H.Html) :<|> UploadAPI :<|> DownloadAPI :<|> ResultsAPI :<|> SearchResAPI  :<|> UploadTutAPI :<|> Raw
 
 searchresHandler :: Pipe -> Maybe String -> Handler H.Html
 searchresHandler p string = do
@@ -82,7 +82,11 @@ mpserver se p = mphandler se p
   mem :: Proxy Mem
   mem = Proxy
 
-  mphandler :: SearchEnv -> Pipe -> MultipartData Mem -> Handler String
+  mphandler
+    :: SearchEnv
+    -> Pipe
+    -> MultipartData Mem
+    -> Handler (Headers '[Header "Location" T.Text] NoContent)
   mphandler se p mpdata = do
     let (Right a) = lookupFile (T.pack "torrent") mpdata
         descr     = lookupInput (T.pack "description") mpdata
@@ -91,6 +95,7 @@ mpserver se p = mphandler se p
     liftIO $ print descr
     db <- liftIO $ torrDB
     liftIO $ access p master db $ addTorrent name file se
+    return $ addHeader (T.pack "/home") NoContent
 
 fullserver :: SearchEnv -> Pipe -> Server UDAPI
 fullserver se p =
@@ -99,8 +104,11 @@ fullserver se p =
     :<|> (dlhandler p)
     :<|> searchHandler se p
     :<|> searchresHandler p
+    :<|> uploadTutHandle
     :<|> serveDirectoryWebApp "/var/www/html"
-  where homeHandler = return landing
+ where
+  homeHandler     = return landing
+  uploadTutHandle = return upload
 
 fullproxy :: Proxy UDAPI
 fullproxy = Proxy

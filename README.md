@@ -35,7 +35,7 @@ cabal v2-run hask-tracker
 # To upload localhost:8080/upload
 # To download localhost:8080/download
 mv static/ /var/www/html/
-cabal v2-run database-check
+cabal v2-run torrent-db 
 ```
 
 Once started, find the address of the host that is running the tracker over the desired 

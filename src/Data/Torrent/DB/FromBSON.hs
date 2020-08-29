@@ -31,7 +31,8 @@ data SearchRes = SearchRes {
                               srInfoHash :: Infohash,
                               srTorrName :: T.Text,
                               srComment  :: Maybe T.Text,
-                              srCreatedBy :: Maybe T.Text
+                              srCreatedBy :: Maybe T.Text,
+                              srSize :: T.Text
                            } deriving Show
 
 optText :: Bson.Value -> Maybe T.Text
@@ -42,12 +43,16 @@ docToSearchRes :: Bson.Document -> Maybe SearchRes
 docToSearchRes doc = do
   (Bson.Bin    (Bson.Binary x)) <- Bson.look "info_hash" doc
   (Bson.String torrName       ) <- Bson.look "tname" doc
+  (Bson.String size           ) <- Bson.look "torrent_size" doc
+
   let comment = Bson.look "comment" doc >>= optText
       creator = Bson.look "created by" doc >>= optText
+
   return $ SearchRes { srInfoHash  = decode $ fromStrict x
                      , srTorrName  = torrName
                      , srComment   = comment
                      , srCreatedBy = creator
+                     , srSize      = size
                      }
 
 toBString :: String -> Maybe BEncode
