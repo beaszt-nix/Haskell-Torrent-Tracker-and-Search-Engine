@@ -1,0 +1,100 @@
+2020-08-31 11:11:17.778759049 [ThreadId 4] - run entered for hie-wrapper(hie-wrapper) Version 1.4, Git revision f78c39c03b7b83beddfcdaf36ebeb8c9f7a22b0f (dirty) (21 commits) x86_64 ghc-8.8.3
+2020-08-31 11:11:17.779106444 [ThreadId 4] - Current directory:/home/anjan/Minor-Project/src/Control/Monad/Trans
+2020-08-31 11:11:17.779193487 [ThreadId 4] - Operating system:linux
+2020-08-31 11:11:17.779251929 [ThreadId 4] - args:["-l","hie-log","-d"]
+2020-08-31 11:11:17.78062845 [ThreadId 4] - Cabal-Helper found these projects: ["ProjLocV2Dir {plProjectDirV2 = \"/home/anjan/Minor-Project\"}","ProjLocV1Dir {plProjectDirV1 = \"/home/anjan/Minor-Project\"}"]
+2020-08-31 11:11:17.780866689 [ThreadId 4] - These projects have the build tools installed: ["ProjLocV2Dir {plProjectDirV2 = \"/home/anjan/Minor-Project\"}","ProjLocV1Dir {plProjectDirV1 = \"/home/anjan/Minor-Project\"}"]
+2020-08-31 11:11:17.780956048 [ThreadId 4] - Cabal-Helper decided to use: ProjLocV2Dir {plProjectDirV2 = "/home/anjan/Minor-Project"}
+2020-08-31 11:11:17.78101777 [ThreadId 4] - Cabal-Helper dirs: ["/home/anjan/Minor-Project","/home/anjan/Minor-Project/src/Control/Monad/Trans/File.hs"]
+2020-08-31 11:11:17.781076122 [ThreadId 4] - Module "/home/anjan/Minor-Project/src/Control/Monad/Trans/File.hs" is loaded by Cradle: Cradle {cradleRootDir = "/home/anjan/Minor-Project", cradleOptsProg = CradleAction: Other CabalV2}
+2020-08-31 11:11:17.78116307 [ThreadId 4] - Cradle directory:/home/anjan/Minor-Project
+2020-08-31 11:11:17.781237087 [ThreadId 4] - Executing GHC on path with args: --numeric-version
+2020-08-31 11:11:17.829801203 [ThreadId 4] - GHC Output: "Just "8.6.5""
+2020-08-31 11:11:17.829938129 [ThreadId 4] - Project GHC version:8.6.5
+2020-08-31 11:11:17.829977081 [ThreadId 4] - hie exe candidates :["hie-8.6.5","hie-8.6","hie"]
+2020-08-31 11:11:17.830143786 [ThreadId 4] - found hie exe at:/usr/bin/hie-8.6.5
+2020-08-31 11:11:17.83018077 [ThreadId 4] - args:["-l","hie-log","-d"]
+2020-08-31 11:11:17.8302111 [ThreadId 4] - launching ....
+
+
+
+2020-08-31 11:11:20.396150899 [ThreadId 4] - run entered for hie-wrapper(hie-wrapper) Version 1.4, Git revision f78c39c03b7b83beddfcdaf36ebeb8c9f7a22b0f (dirty) (21 commits) x86_64 ghc-8.8.3
+2020-08-31 11:11:20.396414984 [ThreadId 4] - Current directory:/home/anjan/Minor-Project/src/Control/Monad/Trans
+2020-08-31 11:11:20.396484834 [ThreadId 4] - Operating system:linux
+2020-08-31 11:11:20.396536018 [ThreadId 4] - args:["-l","hie-log","-d"]
+2020-08-31 11:11:20.397755595 [ThreadId 4] - Cabal-Helper found these projects: ["ProjLocV2Dir {plProjectDirV2 = \"/home/anjan/Minor-Project\"}","ProjLocV1Dir {plProjectDirV1 = \"/home/anjan/Minor-Project\"}"]
+2020-08-31 11:11:20.397919106 [ThreadId 4] - These projects have the build tools installed: ["ProjLocV2Dir {plProjectDirV2 = \"/home/anjan/Minor-Project\"}","ProjLocV1Dir {plProjectDirV1 = \"/home/anjan/Minor-Project\"}"]
+2020-08-31 11:11:20.397977744 [ThreadId 4] - Cabal-Helper decided to use: ProjLocV2Dir {plProjectDirV2 = "/home/anjan/Minor-Project"}
+2020-08-31 11:11:20.398017276 [ThreadId 4] - Cabal-Helper dirs: ["/home/anjan/Minor-Project","/home/anjan/Minor-Project/src/Control/Monad/Trans/File.hs"]
+2020-08-31 11:11:20.398052518 [ThreadId 4] - Module "/home/anjan/Minor-Project/src/Control/Monad/Trans/File.hs" is loaded by Cradle: Cradle {cradleRootDir = "/home/anjan/Minor-Project", cradleOptsProg = CradleAction: Other CabalV2}
+2020-08-31 11:11:20.398102913 [ThreadId 4] - Cradle directory:/home/anjan/Minor-Project
+2020-08-31 11:11:20.398166936 [ThreadId 4] - Executing GHC on path with args: --numeric-version
+2020-08-31 11:11:20.445169016 [ThreadId 4] - GHC Output: "Just "8.6.5""
+2020-08-31 11:11:20.44537099 [ThreadId 4] - Project GHC version:8.6.5
+2020-08-31 11:11:20.445428375 [ThreadId 4] - hie exe candidates :["hie-8.6.5","hie-8.6","hie"]
+2020-08-31 11:11:20.445613843 [ThreadId 4] - found hie exe at:/usr/bin/hie-8.6.5
+2020-08-31 11:11:20.445653079 [ThreadId 4] - args:["-l","hie-log","-d"]
+2020-08-31 11:11:20.445685733 [ThreadId 4] - launching ....
+
+
+
+2020-08-31 11:11:22.267989668 [ThreadId 4] - run entered for hie-wrapper(hie-wrapper) Version 1.4, Git revision f78c39c03b7b83beddfcdaf36ebeb8c9f7a22b0f (dirty) (21 commits) x86_64 ghc-8.8.3
+2020-08-31 11:11:22.268316284 [ThreadId 4] - Current directory:/home/anjan/Minor-Project/src/Control/Monad/Trans
+2020-08-31 11:11:22.268400346 [ThreadId 4] - Operating system:linux
+2020-08-31 11:11:22.268467619 [ThreadId 4] - args:["-l","hie-log","-d"]
+2020-08-31 11:11:22.270308837 [ThreadId 4] - Cabal-Helper found these projects: ["ProjLocV2Dir {plProjectDirV2 = \"/home/anjan/Minor-Project\"}","ProjLocV1Dir {plProjectDirV1 = \"/home/anjan/Minor-Project\"}"]
+2020-08-31 11:11:22.27053755 [ThreadId 4] - These projects have the build tools installed: ["ProjLocV2Dir {plProjectDirV2 = \"/home/anjan/Minor-Project\"}","ProjLocV1Dir {plProjectDirV1 = \"/home/anjan/Minor-Project\"}"]
+2020-08-31 11:11:22.270607421 [ThreadId 4] - Cabal-Helper decided to use: ProjLocV2Dir {plProjectDirV2 = "/home/anjan/Minor-Project"}
+2020-08-31 11:11:22.270651479 [ThreadId 4] - Cabal-Helper dirs: ["/home/anjan/Minor-Project","/home/anjan/Minor-Project/src/Control/Monad/Trans/File.hs"]
+2020-08-31 11:11:22.270688762 [ThreadId 4] - Module "/home/anjan/Minor-Project/src/Control/Monad/Trans/File.hs" is loaded by Cradle: Cradle {cradleRootDir = "/home/anjan/Minor-Project", cradleOptsProg = CradleAction: Other CabalV2}
+2020-08-31 11:11:22.270743647 [ThreadId 4] - Cradle directory:/home/anjan/Minor-Project
+2020-08-31 11:11:22.27081458 [ThreadId 4] - Executing GHC on path with args: --numeric-version
+2020-08-31 11:11:22.321065987 [ThreadId 4] - GHC Output: "Just "8.6.5""
+2020-08-31 11:11:22.321190934 [ThreadId 4] - Project GHC version:8.6.5
+2020-08-31 11:11:22.321231989 [ThreadId 4] - hie exe candidates :["hie-8.6.5","hie-8.6","hie"]
+2020-08-31 11:11:22.321414329 [ThreadId 4] - found hie exe at:/usr/bin/hie-8.6.5
+2020-08-31 11:11:22.321454388 [ThreadId 4] - args:["-l","hie-log","-d"]
+2020-08-31 11:11:22.321488291 [ThreadId 4] - launching ....
+
+
+
+2020-08-31 11:11:24.160888799 [ThreadId 4] - run entered for hie-wrapper(hie-wrapper) Version 1.4, Git revision f78c39c03b7b83beddfcdaf36ebeb8c9f7a22b0f (dirty) (21 commits) x86_64 ghc-8.8.3
+2020-08-31 11:11:24.161411168 [ThreadId 4] - Current directory:/home/anjan/Minor-Project/src/Control/Monad/Trans
+2020-08-31 11:11:24.161517652 [ThreadId 4] - Operating system:linux
+2020-08-31 11:11:24.161580841 [ThreadId 4] - args:["-l","hie-log","-d"]
+2020-08-31 11:11:24.162768341 [ThreadId 4] - Cabal-Helper found these projects: ["ProjLocV2Dir {plProjectDirV2 = \"/home/anjan/Minor-Project\"}","ProjLocV1Dir {plProjectDirV1 = \"/home/anjan/Minor-Project\"}"]
+2020-08-31 11:11:24.162922097 [ThreadId 4] - These projects have the build tools installed: ["ProjLocV2Dir {plProjectDirV2 = \"/home/anjan/Minor-Project\"}","ProjLocV1Dir {plProjectDirV1 = \"/home/anjan/Minor-Project\"}"]
+2020-08-31 11:11:24.162979823 [ThreadId 4] - Cabal-Helper decided to use: ProjLocV2Dir {plProjectDirV2 = "/home/anjan/Minor-Project"}
+2020-08-31 11:11:24.16301832 [ThreadId 4] - Cabal-Helper dirs: ["/home/anjan/Minor-Project","/home/anjan/Minor-Project/src/Control/Monad/Trans/File.hs"]
+2020-08-31 11:11:24.163053515 [ThreadId 4] - Module "/home/anjan/Minor-Project/src/Control/Monad/Trans/File.hs" is loaded by Cradle: Cradle {cradleRootDir = "/home/anjan/Minor-Project", cradleOptsProg = CradleAction: Other CabalV2}
+2020-08-31 11:11:24.16311968 [ThreadId 4] - Cradle directory:/home/anjan/Minor-Project
+2020-08-31 11:11:24.163202081 [ThreadId 4] - Executing GHC on path with args: --numeric-version
+2020-08-31 11:11:24.212902349 [ThreadId 4] - GHC Output: "Just "8.6.5""
+2020-08-31 11:11:24.213051526 [ThreadId 4] - Project GHC version:8.6.5
+2020-08-31 11:11:24.213107113 [ThreadId 4] - hie exe candidates :["hie-8.6.5","hie-8.6","hie"]
+2020-08-31 11:11:24.213352995 [ThreadId 4] - found hie exe at:/usr/bin/hie-8.6.5
+2020-08-31 11:11:24.213425061 [ThreadId 4] - args:["-l","hie-log","-d"]
+2020-08-31 11:11:24.213478182 [ThreadId 4] - launching ....
+
+
+
+2020-08-31 11:11:26.576064142 [ThreadId 4] - run entered for hie-wrapper(hie-wrapper) Version 1.4, Git revision f78c39c03b7b83beddfcdaf36ebeb8c9f7a22b0f (dirty) (21 commits) x86_64 ghc-8.8.3
+2020-08-31 11:11:26.576433162 [ThreadId 4] - Current directory:/home/anjan/Minor-Project/src/Control/Monad/Trans
+2020-08-31 11:11:26.576531678 [ThreadId 4] - Operating system:linux
+2020-08-31 11:11:26.576615522 [ThreadId 4] - args:["-l","hie-log","-d"]
+2020-08-31 11:11:26.578272524 [ThreadId 4] - Cabal-Helper found these projects: ["ProjLocV2Dir {plProjectDirV2 = \"/home/anjan/Minor-Project\"}","ProjLocV1Dir {plProjectDirV1 = \"/home/anjan/Minor-Project\"}"]
+2020-08-31 11:11:26.578547801 [ThreadId 4] - These projects have the build tools installed: ["ProjLocV2Dir {plProjectDirV2 = \"/home/anjan/Minor-Project\"}","ProjLocV1Dir {plProjectDirV1 = \"/home/anjan/Minor-Project\"}"]
+2020-08-31 11:11:26.578611125 [ThreadId 4] - Cabal-Helper decided to use: ProjLocV2Dir {plProjectDirV2 = "/home/anjan/Minor-Project"}
+2020-08-31 11:11:26.578650688 [ThreadId 4] - Cabal-Helper dirs: ["/home/anjan/Minor-Project","/home/anjan/Minor-Project/src/Control/Monad/Trans/File.hs"]
+2020-08-31 11:11:26.578685571 [ThreadId 4] - Module "/home/anjan/Minor-Project/src/Control/Monad/Trans/File.hs" is loaded by Cradle: Cradle {cradleRootDir = "/home/anjan/Minor-Project", cradleOptsProg = CradleAction: Other CabalV2}
+2020-08-31 11:11:26.578734431 [ThreadId 4] - Cradle directory:/home/anjan/Minor-Project
+2020-08-31 11:11:26.578797724 [ThreadId 4] - Executing GHC on path with args: --numeric-version
+2020-08-31 11:11:26.625256269 [ThreadId 4] - GHC Output: "Just "8.6.5""
+2020-08-31 11:11:26.625380679 [ThreadId 4] - Project GHC version:8.6.5
+2020-08-31 11:11:26.625420109 [ThreadId 4] - hie exe candidates :["hie-8.6.5","hie-8.6","hie"]
+2020-08-31 11:11:26.625628675 [ThreadId 4] - found hie exe at:/usr/bin/hie-8.6.5
+2020-08-31 11:11:26.625685172 [ThreadId 4] - args:["-l","hie-log","-d"]
+2020-08-31 11:11:26.625723215 [ThreadId 4] - launching ....
+
+
+

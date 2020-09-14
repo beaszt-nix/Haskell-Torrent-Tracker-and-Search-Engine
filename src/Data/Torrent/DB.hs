@@ -72,8 +72,8 @@ torSize :: Document -> Value
 torSize doc =
   let (Doc   info ) = fromMaybe (Doc []) $ look "info" doc
       (Array files) = fromMaybe (Array []) $ look "files" info
-      files' = map (\(Doc a) -> fromMaybe (Int32 0) $ look "length" a) files
-      output        = foldr (\(Int32 x) b -> (fromIntegral x) + b) 0 files'
+      files' = map (\(Doc a) -> fromMaybe (Int64 0) $ look "length" a) files
+      output        = foldr (\(Int64 x) b -> (fromIntegral x) + b) 0 files'
   in  (String $ smallSize output)
 
 connToDB :: IO (Maybe Pipe)

@@ -46,7 +46,7 @@ bsonbinary = bsonreader $ \b -> case b of
 
 bsonint :: BsonValueReader Integer
 bsonint = bsonreader $ \b -> case b of
-  Bson.Int32 x -> return $ fromIntegral x
+  Bson.Int64 x -> return $ fromIntegral x
   _            -> Nothing
 
 bsontime :: BsonValueReader Integer

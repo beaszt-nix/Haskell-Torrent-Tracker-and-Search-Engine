@@ -42,7 +42,7 @@ bencodeToBSON bs =
 toBinary :: BL.ByteString -> Bson.Value
 toBinary x = Bson.Bin (Bson.Binary $ toStrict x)
 
--- Primary Torrent Parser 
+-- Primary Torrent Parser
 btorrent :: BReader Bson.Document
 btorrent = do
   info      <- dict "info" binfo
@@ -64,20 +64,15 @@ btorrent = do
 
 -- Helper Functions to Convert into BSON compatible Constructors
 sToText = Bson.String . T.pack
-sToInt = Bson.Int32 . fromInteger
+sToInt = Bson.Int64 . fromIntegral
 
 -- Parser for individual file dictionary
 bfile :: BReader Bson.Value
 bfile = do
   len    <- dict "length" bint
   path   <- dict "path" (list bstring)
-  md5sum <- optional $ dict "md5sum" bstring
-  let md5 = fromMaybe "" md5sum
-      li  = case length md5 of
-        32 -> ["md5sum" =: sToText md5]
-        _  -> []
-      pth = intercalate "/" path
-  return $ Bson.Doc $ ["length" =: sToInt len, "path" =: sToText pth] ++ li
+  let pth = intercalate "/" path
+  return $ Bson.Doc $ ["length" =: sToInt len, "path" =: sToText pth]
 
 -- Parses optional arguments that may or may not be present in MetaInfo file
 fromOptional :: Maybe a -> String -> (a -> Bson.Value) -> Bson.Document
@@ -103,7 +98,7 @@ binfo = do
     , pvt
     ]
 
--- Parses the list of file dictionaries 
+-- Parses the list of file dictionaries
 bmultifile :: BReader Bson.Value
 bmultifile = do
   name  <- dict "name" bstring
