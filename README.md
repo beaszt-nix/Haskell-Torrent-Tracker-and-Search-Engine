@@ -1,4 +1,6 @@
 # Minor Project
+![High-Speed Walk-Through](https://j.gifs.com/L7EGKj.gif)
+
 ## Pre-Build 
 Install MongoDB, create a database with authentication.
 Note the port on which mongo is running.
