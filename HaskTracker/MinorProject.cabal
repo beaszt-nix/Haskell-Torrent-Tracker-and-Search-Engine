@@ -1,0 +1,50 @@
+cabal-version:       >=1.10
+name:                MinorProject
+version:             0.1.0.0
+with-compiler:       /home/anjan/.ghcup/bin/ghc-8.6.5
+license:             BSD3
+license-file:        LICENSE
+author:              Anjan Srihari
+maintainer:          anjansrihari14@gmail.com
+build-type:          Simple
+extra-source-files:  CHANGELOG.md
+
+executable hask-tracker
+  main-is: Exec/hask-tracker.hs
+  other-modules:
+       Network.Torrent.Tracker.PeerAccess,
+       Network.Torrent.Tracker.AnnounceReqTypes,
+       Network.Torrent.Tracker.AnnounceSrv,
+       Network.Torrent.Tracker.AnnounceUDP
+
+  build-depends:
+      base                 >= 4.7 && < 5,
+      cryptohash           == 0.11.9,
+      bson                 >= 0.3 && < 0.5,
+      Crypto               >= 4.2 && < 5,
+      MonadRandom          >= 0.5.2 && < 0.6,
+      mtl                  >= 2.2.2 && < 2.3,
+      uri-encode,
+      warp,
+      transformers         >= 0.5.6 && < 0.6,
+      bytestring           >= 0.10.8 && < 0.11,
+      time                 >= 1.8.0 && < 1.9,
+      attoparsec           >= 0.13.2 && < 0.14,
+      servant-server,
+      containers           >= 0.6.0 && < 0.7,
+      binary               >= 0.8.6 && < 0.9,
+      text                 >= 1.2.3 && < 1.3,
+      bencode              >= 0.6.1 && < 0.7,
+      network              >= 3.1.1 && < 3.2,
+      cpu                  >= 0.1.2 && < 0.2,
+      split                >= 0.2.3 && < 0.3,
+      hashable,
+      mwc-random,
+      primitive,
+      http-types,
+      unordered-containers >= 0.2.11 && < 0.3,
+      saltine              >= 0.1.1 && < 0.2,
+      time-compat          >= 1.9.3 && < 1.10,
+      typesafe-endian      >= 0.1.0 && < 0.2
+  hs-source-dirs:      src
+  default-language:    Haskell2010
