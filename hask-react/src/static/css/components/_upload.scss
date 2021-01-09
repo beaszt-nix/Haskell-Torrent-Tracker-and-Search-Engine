@@ -1,0 +1,48 @@
+.uploads {
+    padding-top: 4em;
+    padding-left: 4em;
+    margin: 2vh 15vw;
+    width: 60%;
+
+    &-form {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        margin: 2em auto;
+        padding: 1em;
+        border-radius: 1.1em;
+        background-color: $primary-color;
+
+        > textarea {
+            resize: none;
+        }
+        > input {
+            margin: 1em 0;
+        }
+
+        > input[type="text"] {
+            height: 3em;
+        }
+        > button {
+            margin: 2em 0em;
+            height: 3em;
+        }
+
+        &__fileselect {
+            border-radius: 1.1em;
+            height: 2em;
+            text-align: center;
+            border-width: 0;                
+            background-color: $accent-color;
+            color: $light-background;
+            font-weight: 600;
+            margin: 1em 0;
+            padding: 0.5em;
+            cursor: pointer;
+
+            > input[type="file"] {
+                display: none;
+            }
+        }
+    }
+}

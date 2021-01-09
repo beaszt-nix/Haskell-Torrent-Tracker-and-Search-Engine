@@ -1,0 +1,20 @@
+.file-list {
+    padding-left: 1em;
+    padding-top: 0.3em;
+    
+    &__leaf {
+        margin: 0.25em 0;
+    }
+    
+    &__folder {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 0.2em;
+
+        &__subdirectory {
+            height: auto;
+            overflow: hidden;
+            padding-left: 1em;
+        }
+    }
+}

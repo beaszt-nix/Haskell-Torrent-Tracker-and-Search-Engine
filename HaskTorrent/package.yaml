@@ -21,9 +21,27 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - aeson
+- time
 - servant-server
+- servant-multipart
+- uri-encode
+- cryptonite
+- memory
 - wai
+- wai-cors
+- http-media
+- wai-extra
 - warp
+- persistent
+- persistent-template
+- bencode
+- bson
+- mongoDB
+- text
+- network
+- bytestring
+- containers
+- unordered-containers
 
 library:
   source-dirs: src

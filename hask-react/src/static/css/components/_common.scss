@@ -1,0 +1,41 @@
+a:hover {
+    background-color: darken($primary-color, 10%);
+}
+a:link, a:visited {
+    color: $light-background;
+}
+
+button {
+    border-radius: 1.1em;
+    border-width: 0;                
+    background-color: $accent-color;
+    color: $light-background;
+    font-weight: 600;
+}
+
+button:hover {
+    border-width: 1px;
+    border-color: $border-color;
+}
+
+input[type=text], textarea {
+    border-width: 0;
+    background-color: lighten($primary-color, 10%);
+    color: $light-background;
+    border-radius: 1.1em;
+    padding-left: 15px;
+    padding-top: 4px;
+}
+
+input[type=text]::placeholder, textarea::placeholder {
+    color: darken($light-background, 20%);
+}
+
+input[type=text]:hover, textarea:hover {
+    border-color: $accent-color;
+    border-width: 1px;
+}
+
+body {
+    background-color: $dark-background;
+}

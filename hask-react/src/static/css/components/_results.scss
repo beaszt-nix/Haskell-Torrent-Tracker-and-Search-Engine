@@ -1,0 +1,56 @@
+.results-card {
+    margin: 1em 1em;
+    width: 18em;
+    height: 10em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    background-color: darken($primary-color, 5%);
+    color: lighten($dark-background, 80%);
+    border-radius: 0.6em;
+    padding: auto 3em;
+
+    &__scrape {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+
+    &__header {
+        text-align: center;
+        > p {
+            margin: 0.3em;
+            font-weight: 600;
+        }
+    }
+    
+    &__details {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin: 2em auto;
+    }
+
+    &__tags {
+        height: 5em;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+.results-card:hover {
+    background-color: $accent-color;
+    color: lighten($dark-background, 80%);
+    border-radius: 1.1em;
+}
+
+.results {
+    padding-top: 4em;
+    padding-left: 4em;
+    margin-left: 7vw;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 80%;
+}

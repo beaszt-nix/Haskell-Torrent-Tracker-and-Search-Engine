@@ -1,0 +1,467 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;900&display=swap");
+@import url("https://pro.fontawesome.com/releases/v5.10.0/css/all.css");
+html {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+img {
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+button, input, select, textarea, input::-webkit-input-placeholder {
+  font-family: 'Montserrat', sans-serif;
+}
+
+button, input, select, textarea, input:-ms-input-placeholder {
+  font-family: 'Montserrat', sans-serif;
+}
+
+button, input, select, textarea, input::-ms-input-placeholder {
+  font-family: 'Montserrat', sans-serif;
+}
+
+button, input, select, textarea, input::placeholder {
+  font-family: 'Montserrat', sans-serif;
+}
+
+a:hover {
+  background-color: #1f2e3c;
+}
+
+a:link, a:visited {
+  color: #dddddd;
+}
+
+button {
+  border-radius: 1.1em;
+  border-width: 0;
+  background-color: #f05454;
+  color: #dddddd;
+  font-weight: 600;
+}
+
+button:hover {
+  border-width: 1px;
+  border-color: rgba(211, 211, 211, 0.55);
+}
+
+input[type=text], textarea {
+  border-width: 0;
+  background-color: #416180;
+  color: #dddddd;
+  border-radius: 1.1em;
+  padding-left: 15px;
+  padding-top: 4px;
+}
+
+input[type=text]::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+  color: #aaaaaa;
+}
+
+input[type=text]:-ms-input-placeholder, textarea:-ms-input-placeholder {
+  color: #aaaaaa;
+}
+
+input[type=text]::-ms-input-placeholder, textarea::-ms-input-placeholder {
+  color: #aaaaaa;
+}
+
+input[type=text]::placeholder, textarea::placeholder {
+  color: #aaaaaa;
+}
+
+input[type=text]:hover, textarea:hover {
+  border-color: #f05454;
+  border-width: 1px;
+}
+
+body {
+  background-color: #222831;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  height: 4em;
+  padding: 10px 10px;
+  background-color: #30475e;
+}
+
+.header__logo {
+  margin: auto 20px;
+  width: 10%;
+}
+
+.header__logo > img {
+  width: 90%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.header__right {
+  margin: auto 10px;
+}
+
+.header__bar {
+  width: 60%;
+}
+
+.header__bar__form {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.header__bar__form > input[type="text"] {
+  width: 80%;
+}
+
+.header__bar__form > button {
+  width: 18%;
+}
+
+.results-card {
+  margin: 1em 1em;
+  width: 18em;
+  height: 10em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  background-color: #273a4d;
+  color: #f4f5f7;
+  border-radius: 0.6em;
+  padding: auto 3em;
+}
+
+.results-card__scrape {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+}
+
+.results-card__header {
+  text-align: center;
+}
+
+.results-card__header > p {
+  margin: 0.3em;
+  font-weight: 600;
+}
+
+.results-card__details {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin: 2em auto;
+}
+
+.results-card__tags {
+  height: 5em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.results-card:hover {
+  background-color: #f05454;
+  color: #f4f5f7;
+  border-radius: 1.1em;
+}
+
+.results {
+  padding-top: 4em;
+  padding-left: 4em;
+  margin-left: 7vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  width: 80%;
+}
+
+.uploads {
+  padding-top: 4em;
+  padding-left: 4em;
+  margin: 2vh 15vw;
+  width: 60%;
+}
+
+.uploads-form {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  margin: 2em auto;
+  padding: 1em;
+  border-radius: 1.1em;
+  background-color: #30475e;
+}
+
+.uploads-form > textarea {
+  resize: none;
+}
+
+.uploads-form > input {
+  margin: 1em 0;
+}
+
+.uploads-form > input[type="text"] {
+  height: 3em;
+}
+
+.uploads-form > button {
+  margin: 2em 0em;
+  height: 3em;
+}
+
+.uploads-form__fileselect {
+  border-radius: 1.1em;
+  height: 2em;
+  text-align: center;
+  border-width: 0;
+  background-color: #f05454;
+  color: #dddddd;
+  font-weight: 600;
+  margin: 1em 0;
+  padding: 0.5em;
+  cursor: pointer;
+}
+
+.uploads-form__fileselect > input[type="file"] {
+  display: none;
+}
+
+.torrent-desc {
+  padding: 4em 4em;
+  margin: 6em 4em;
+  width: 65%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  background-color: #30475e;
+  border-radius: 1.1em;
+  color: #dddddd;
+}
+
+.torrent-desc__title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  text-overflow: ellipsis;
+  margin-bottom: 1em;
+}
+
+.torrent-desc--sub_box {
+  margin: 0.4em;
+  border-radius: 1.1em;
+  padding: 0.7em;
+  background-color: #2c3440;
+}
+
+.torrent-desc__details {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  height: 6em;
+}
+
+.torrent-desc__details__field {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  margin: 0.2em;
+  width: 48%;
+}
+
+.torrent-desc__details__field > dt {
+  font-weight: 300;
+  margin-right: 0.5em;
+  width: 35%;
+  color: #92adc8;
+}
+
+.torrent-desc--title {
+  color: #92adc8;
+}
+
+.torrent-desc__readme > p {
+  padding: 0.7em;
+  white-space: pre-wrap;
+}
+
+.torrent-desc__dl {
+  background-color: #f05454;
+}
+
+.file-list {
+  padding-left: 1em;
+  padding-top: 0.3em;
+}
+
+.file-list__leaf {
+  margin: 0.25em 0;
+}
+
+.file-list__folder {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding-bottom: 0.2em;
+}
+
+.file-list__folder__subdirectory {
+  height: auto;
+  overflow: hidden;
+  padding-left: 1em;
+}
+/*# sourceMappingURL=main.css.map */

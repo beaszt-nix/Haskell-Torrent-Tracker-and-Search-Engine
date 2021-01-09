@@ -1,0 +1,59 @@
+.torrent-desc {
+    padding: 4em 4em;
+    margin: 6em 4em;
+    width: 65%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    background-color: $primary-color;
+    border-radius: 1.1em;
+    color: $light-background;
+
+    &__title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        text-align: center;
+        text-overflow: ellipsis;
+        margin-bottom: 1em;
+    }
+
+    &--sub_box {
+        margin: 0.4em;  
+        border-radius: 1.1em;
+        padding: 0.7em;
+        background-color: lighten($dark-background, 5%);
+    }
+
+    &__details {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        height: 6em;
+
+        &__field {
+            display: flex;
+            flex-direction: row;
+            margin: 0.2em;
+            width: 48%;
+            > dt {
+                font-weight: 300;
+                margin-right: 0.5em;
+                width: 35%;
+                color: lighten($primary-color, 40%);
+            }
+        }
+    }
+    &--title {
+        color: lighten($primary-color, 40%);
+    }
+    &__readme {
+        > p {
+            padding: 0.7em;
+            white-space: pre-wrap;
+        }
+    }
+
+    &__dl {
+        background-color: $accent-color;
+    }
+}

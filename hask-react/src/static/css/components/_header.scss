@@ -1,0 +1,43 @@
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 4em;
+    padding: 10px 10px;
+    background-color: $primary-color;
+
+    &__logo {
+        margin: auto 20px;
+        width: 10%;
+        > img {
+            width: 90%;
+            object-fit: cover;
+        }
+    }
+
+    &__right {
+        margin: auto 10px;
+    }
+
+    &__bar {
+        width: 60%;
+        
+        &__form {
+            display: flex;
+            height: 100%;
+            flex-direction: row;
+            justify-content: space-between;
+
+            > input[type="text"] {
+                width: 80%;
+            }
+
+            > button {
+                width: 18%;
+            }
+        }
+    }
+}
