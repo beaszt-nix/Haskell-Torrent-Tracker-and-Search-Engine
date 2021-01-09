@@ -32,8 +32,6 @@ dependencies:
 - http-media
 - wai-extra
 - warp
-- persistent
-- persistent-template
 - bencode
 - bson
 - mongoDB
