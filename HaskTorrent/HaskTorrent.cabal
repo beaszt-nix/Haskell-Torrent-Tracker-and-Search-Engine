@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4fb61dc38e7e8f30c57dbfa4c67e05ac64559c03966e5050e7af41e5ceac196c
+-- hash: 9186307ef8ec6d144d4f63a42c23f7362f662770f3e2fee2323767f75e1805d8
 
 name:           HaskTorrent
 version:        0.1.0.0
@@ -26,7 +26,6 @@ source-repository head
 
 library
   exposed-modules:
-      Api
       DB.Access
       DB.Search
       Lib
@@ -50,8 +49,6 @@ library
     , memory
     , mongoDB
     , network
-    , persistent
-    , persistent-template
     , servant-multipart
     , servant-server
     , text
@@ -84,8 +81,6 @@ executable HaskTorrent-exe
     , memory
     , mongoDB
     , network
-    , persistent
-    , persistent-template
     , servant-multipart
     , servant-server
     , text
@@ -122,8 +117,6 @@ test-suite HaskTorrent-test
     , memory
     , mongoDB
     , network
-    , persistent
-    , persistent-template
     , servant-multipart
     , servant-server
     , text
